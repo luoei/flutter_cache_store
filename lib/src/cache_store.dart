@@ -76,8 +76,15 @@ class CacheStore {
   static SharedPreferences get prefs => _prefs;
 
   static Future<String> _getRootPath() async {
-    final tmpPath = (await getTemporaryDirectory()).path;
-    return '$tmpPath/$_DEFAULT_STORE_FOLDER';
+    if(Platform.isAndroid){
+      final tmpPaths = await getExternalCacheDirectories();
+      final tmpPath = tmpPaths.last.path;
+      return '$tmpPath/$_DEFAULT_STORE_FOLDER';
+    }else{
+      final tmpPath = (await getTemporaryDirectory()).path;
+      return '$tmpPath/$_DEFAULT_STORE_FOLDER';
+    }
+
   }
 
   static Future<void> _initStatic() async {
